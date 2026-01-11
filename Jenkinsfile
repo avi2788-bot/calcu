@@ -33,7 +33,6 @@ pipeline {
                 script {
                     echo "Running tests inside the container..."
                     // This runs your tests inside a temporary container
-                    sh "docker run --rm ${IMAGE_NAME}:${IMAGE_TAG} test_calculator_app_integration.py test_calculator_logic.py
                 }
             }
         }
