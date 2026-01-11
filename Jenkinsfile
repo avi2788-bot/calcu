@@ -1,9 +1,7 @@
 
 pipeline {
     agent any
-	tools {
-		dockerTool 'my-docker'
-		}
+
     environment {
         // Define your image name
         IMAGE_NAME = "my-python-app"
