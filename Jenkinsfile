@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}..."
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./calculator-app/"
+                    sh docker.build("my-python-app:${env.BUILD_ID}", "./calculator-app/")
                 }
             }
         }
