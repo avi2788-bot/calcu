@@ -1,26 +1,16 @@
-
 pipeline {
     agent any
 
     environment {
-        // Define your image name
-        IMAGE_NAME = "my-python-app"
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
-        // DOCKER_HUB_USER = "your-username" // Uncomment if pushing to Docker Hub
+        IMAGE_NAME = "calculator-app-test"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Pulls code from your Git repository
-                checkout scm
-            }
-        }
-
         stage('Build Image') {
             steps {
                 script {
-                    echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}..."
+                    // בניית ה-Image מתוך התיקייה הפנימית
+                    sh "docker build -t ${IMAGE_NAME} ./calculator-app"
                 }
             }
         }
@@ -28,29 +18,29 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    echo "Running tests inside the container..."
-                    // This runs your tests inside a temporary container
+                    // הרצת הבדיקות בתוך הקונטיינר
+                    // --rm דואג למחוק את הקונטיינר בסיום ההרצה
+                    sh "docker run --rm ${IMAGE_NAME} pytest tests/"
                 }
             }
         }
 
         stage('Cleanup') {
             steps {
-                echo "Cleaning up dangling images..."
-                sh "docker image prune -f"
+                script {
+                    // ניקוי ה-Image המקומי כדי לא להעמיס על השרת
+                    sh "docker rmi ${IMAGE_NAME}"
+                }
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline finished."
-        }
-        success {
-            echo "Build and Test successful!"
+            echo 'Pipeline finished.'
         }
         failure {
-            echo "Build failed. Check the logs."
+            echo 'Tests failed! Check the logs.'
         }
     }
 }
